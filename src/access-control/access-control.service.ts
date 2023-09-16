@@ -1,27 +1,25 @@
-import { Injectable, Req } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { AccessControl, IQueryInfo } from "accesscontrol";
 import { roles } from "src/app.roles";
-import { GetUser } from "src/auth/decorator";
 
 @Injectable()
 export class AccessControlService {
     accessControl: AccessControl;
+    currentUser: any;
 
-    constructor(@Req  () private request: Request) {//@GetUser() private currentUser: any
+    constructor() {//@GetUser() private currentUser: any //@Req() private request: Request
       this.accessControl = roles;
-  
     }
 
-    canUser(query: IQueryInfo, resourceOwnerID?: number) {
-        // if(resourceOwnerID && (resourceOwnerID !== this.currentUser.id)) {
-        //     query.possession = "any";
-        // } else {
-        //     query.possession = "own";
-        // }
-        // query.role = this.currentUser.roles;
-        // var permission = this.accessControl.permission(query);
+    canUser(query: IQueryInfo, currentUser: any, resourceOwnerID?: number) {
+        if(resourceOwnerID && (resourceOwnerID !== currentUser.id)) {
+            query.possession = "any";
+        } else {
+            query.possession = "own";
+        }
+        query.role = currentUser.roles;
+        var permission = this.accessControl.permission(query);
         
-        // return permission.granted;
+        return permission.granted;
     }
-
 }
